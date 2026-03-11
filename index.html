@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechSupport Pro - Техническая поддержка Windows</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="gradient-sphere sphere-1"></div>
+        <div class="gradient-sphere sphere-2"></div>
+        <div class="gradient-sphere sphere-3"></div>
+        <div class="grid-overlay"></div>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <span>TechSupport <span class="logo-pro">Pro</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#home" class="nav-link active">Главная</a>
+                <a href="#features" class="nav-link">Возможности</a>
+                <a href="#categories" class="nav-link">Команды</a>
+                <a href="#system" class="nav-link">Система</a>
+                <a href="#diagnostics" class="nav-link">Диагностика</a>
+            </div>
+            <button class="nav-cta" onclick="window.scrollTo({top: document.getElementById('categories').offsetTop - 100, behavior: 'smooth'})">
+                Открыть панель
+            </button>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="badge-pulse"></span>
+                <span class="badge-dot"></span>
+                Версия 1.0 • Windows 10/11
+            </div>
+            <h1 class="hero-title">
+                <span class="title-line">Мощный инструмент</span>
+                <span class="gradient-text">технической поддержки</span>
+                <span class="title-line">вашего компьютера</span>
+            </h1>
+            <p class="hero-description">
+                Более 40 полезных команд для оптимизации, диагностики и обслуживания системы. 
+                Работает полностью локально без интернета и установки дополнительного ПО.
+            </p>
+            <div class="hero-buttons">
+                <a href="#categories" class="btn btn-primary btn-glow">
+                    <span>Начать работу</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a href="#features" class="btn btn-secondary">
+                    <span>Узнать больше</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 5v14M5 12l7 7 7-7"/>
+                    </svg>
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number" data-count="40">0</span>
+                    <span class="stat-label">Команд</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number" data-count="6">0</span>
+                    <span class="stat-label">Категорий</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat">
+                    <span class="stat-number">100<span class="stat-percent">%</span></span>
+                    <span class="stat-label">Локально</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="terminal-preview">
+                <div class="terminal-header">
+                    <div class="terminal-dots">
+                        <span class="dot red"></span>
+                        <span class="dot yellow"></span>
+                        <span class="dot green"></span>
+                    </div>
+                    <span class="terminal-title">TechSupport Pro</span>
+                    <div class="terminal-actions">
+                        <span class="terminal-action">⟨⟩</span>
+                        <span class="terminal-action">✕</span>
+                    </div>
+                </div>
+                <div class="terminal-body">
+                    <div class="terminal-line">
+                        <span class="prompt">PS C:\TechSupport\></span>
+                        <span class="command typing">Get-SystemHealth</span>
+                    </div>
+                    <div class="terminal-output">
+                        <div class="output-line success">
+                            <span class="output-icon">✓</span>
+                            <span>Система оптимизирована</span>
+                        </div>
+                        <div class="output-line success">
+                            <span class="output-icon">✓</span>
+                            <span>Временные файлы удалены</span>
+                        </div>
+                        <div class="output-line success">
+                            <span class="output-icon">✓</span>
+                            <span>DNS кэш очищен</span>
+                        </div>
+                        <div class="output-line info">
+                            <span class="output-icon">ℹ</span>
+                            <span>Освобождено: 2.4 GB</span>
+                        </div>
+                    </div>
+                    <div class="terminal-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%"></div>
+                        </div>
+                        <span class="progress-text">Готово!</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Floating badges -->
+            <div class="floating-badge badge-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                </svg>
+                <span>Быстро</span>
+            </div>
+            <div class="floating-badge badge-2">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+                <span>Безопасно</span>
+            </div>
+            <div class="floating-badge badge-3">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+                <span>0 сек</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Преимущества</span>
+                <h2 class="section-title">Почему выбирают TechSupport Pro?</h2>
+                <p class="section-description">Профессиональный инструмент для обслуживания Windows</p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <div class="icon-bg"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <h3>Мгновенный запуск</h3>
+                    <p>Не требует установки Python, Node.js или других зависимостей. Просто запустите start.bat</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-purple">
+                        <div class="icon-bg"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/>
+                            <path d="M7 11V7a5 5 0 0110 0v4"/>
+                        </svg>
+                    </div>
+                    <h3>Полная локальность</h3>
+                    <p>Работает без интернета. Все данные остаются на вашем компьютере</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-green">
+                        <div class="icon-bg"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <h3>Высокая скорость</h3>
+                    <p>Команды выполняются напрямую через PowerShell за доли секунды</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-orange">
+                        <div class="icon-bg"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <h3>Безопасность</h3>
+                    <p>Только проверенные системные команды без вредоносного кода</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-pink">
+                        <div class="icon-bg"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3>Современный интерфейс</h3>
+                    <p>Красивый дизайн с анимациями и интуитивным управлением</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon icon-cyan">
+                        <div class="icon-bg"></div>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <h3>40+ команд</h3>
+                    <p>Очистка, сеть, система, безопасность, диагностика и инструменты</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How it Works -->
+    <section class="how-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Инструкция</span>
+                <h2 class="section-title">Как это работает?</h2>
+                <p class="section-description">Три простых шага до идеальной работы системы</p>
+            </div>
+            
+            <div class="steps-container">
+                <div class="step-card">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                <path d="M8 21h8"/>
+                                <path d="M12 17v4"/>
+                            </svg>
+                        </div>
+                        <h3>Запустите start.bat</h3>
+                        <p>Дважды кликните по файлу start.bat для запуска локального сервера</p>
+                    </div>
+                    <div class="step-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                            </svg>
+                        </div>
+                        <h3>Выберите команду</h3>
+                        <p>Выберите нужную категорию и кликните на команду для выполнения</p>
+                    </div>
+                    <div class="step-arrow">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </div>
+                
+                <div class="step-card">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <div class="step-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+                                <polyline points="22 4 12 14.01 9 11.01"/>
+                            </svg>
+                        </div>
+                        <h3>Получите результат</h3>
+                        <p>Мгновенно получите результат выполнения в удобном модальном окне</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- System Info Section -->
+    <section id="system" class="system-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Мониторинг</span>
+                <h2 class="section-title">Информация о системе</h2>
+                <p class="section-description">Актуальные данные о вашем компьютере в реальном времени</p>
+            </div>
+            <div class="system-grid" id="systemInfo">
+                <div class="system-card">
+                    <div class="system-icon cpu">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/>
+                            <rect x="9" y="9" width="6" height="6"/>
+                            <line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/>
+                            <line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/>
+                            <line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/>
+                            <line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/>
+                        </svg>
+                    </div>
+                    <div class="system-info">
+                        <span class="system-label">Процессор</span>
+                        <span class="system-value" id="cpuInfo">Загрузка...</span>
+                    </div>
+                    <div class="system-bar">
+                        <div class="bar-fill" id="cpuBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="system-card">
+                    <div class="system-icon ram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 19v-3M10 19v-6M14 19v-9M18 19V5"/>
+                        </svg>
+                    </div>
+                    <div class="system-info">
+                        <span class="system-label">Оперативная память</span>
+                        <span class="system-value" id="ramInfo">Загрузка...</span>
+                    </div>
+                    <div class="system-bar">
+                        <div class="bar-fill ram" id="ramBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="system-card">
+                    <div class="system-icon disk">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </div>
+                    <div class="system-info">
+                        <span class="system-label">Диск (C:)</span>
+                        <span class="system-value" id="diskInfo">Загрузка...</span>
+                    </div>
+                    <div class="system-bar">
+                        <div class="bar-fill disk" id="diskBar" style="width: 0%"></div>
+                    </div>
+                </div>
+                <div class="system-card">
+                    <div class="system-icon os">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <div class="system-info">
+                        <span class="system-label">Операционная система</span>
+                        <span class="system-value" id="osInfo">Загрузка...</span>
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary refresh-btn" onclick="refreshSystemInfo()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M23 4v6h-6M1 20v-6h6"/>
+                    <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                </svg>
+                <span>Обновить информацию</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section id="categories" class="categories-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Панель управления</span>
+                <h2 class="section-title">Категории команд</h2>
+                <p class="section-description">Выберите категорию и выполните нужную команду одним кликом</p>
+            </div>
+            
+            <!-- Category Tabs -->
+            <div class="category-tabs">
+                <button class="category-tab active" data-category="cleaning">
+                    <div class="tab-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                        </svg>
+                    </div>
+                    <span>Очистка</span>
+                    <span class="tab-count">6</span>
+                </button>
+                <button class="category-tab" data-category="network">
+                    <div class="tab-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                        </svg>
+                    </div>
+                    <span>Сеть</span>
+                    <span class="tab-count">6</span>
+                </button>
+                <button class="category-tab" data-category="system">
+                    <div class="tab-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/>
+                        </svg>
+                    </div>
+                    <span>Система</span>
+                    <span class="tab-count">6</span>
+                </button>
+                <button class="category-tab" data-category="security">
+                    <div class="tab-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <span>Безопасность</span>
+                    <span class="tab-count">6</span>
+                </button>
+                <button class="category-tab" data-category="diagnostics">
+                    <div class="tab-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <span>Диагностика</span>
+                    <span class="tab-count">6</span>
+                </button>
+                <button class="category-tab" data-category="tools">
+                    <div class="tab-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <span>Инструменты</span>
+                    <span class="tab-count">6</span>
+                </button>
+            </div>
+
+            <!-- Commands Container -->
+            <div class="commands-container">
+                <!-- Cleaning Commands -->
+                <div class="commands-grid active" id="cleaning">
+                    <div class="command-card" onclick="executeCommand('cleanTemp')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка папки TEMP</h3>
+                            <p>Удаляет временные файлы пользователя</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('cleanWindowsTemp')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <path d="M9 9h6v6H9z"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка Windows Temp</h3>
+                            <p>Удаляет системные временные файлы</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('cleanPrefetch')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка Prefetch</h3>
+                            <p>Очищает файлы предзагрузки</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('cleanRecycleBin')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка корзины</h3>
+                            <p>Полностью очищает корзину</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('cleanBrowserCache')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="4"/>
+                                <line x1="21.17" y1="8" x2="12" y2="8"/>
+                                <line x1="3.95" y1="6.06" x2="8.54" y2="14"/>
+                                <line x1="10.88" y1="21.94" x2="15.46" y2="14"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка кэша браузеров</h3>
+                            <p>Очищает кэш Chrome, Edge, Firefox</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('cleanWindowsUpdate')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="17 8 12 3 7 8"/>
+                                <line x1="12" y1="3" x2="12" y2="15"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка обновлений Windows</h3>
+                            <p>Удаляет старые файлы обновлений</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Network Commands -->
+                <div class="commands-grid" id="network">
+                    <div class="command-card" onclick="executeCommand('flushDNS')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="2" y1="12" x2="22" y2="12"/>
+                                <path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Сброс DNS кэша</h3>
+                            <p>Очищает кэш DNS-резолвера</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('releaseRenewIP')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M23 4v6h-6M1 20v-6h6"/>
+                                <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Обновление IP-адреса</h3>
+                            <p>Освобождает и обновляет IP</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('resetNetwork')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2"/>
+                                <rect x="2" y="14" width="20" height="8" rx="2"/>
+                                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                                <line x1="6" y1="18" x2="6.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Сброс сети</h3>
+                            <p>Полный сброс сетевого стека</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('showNetworkInfo')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="12" y1="16" x2="12" y2="12"/>
+                                <line x1="12" y1="8" x2="12.01" y2="8"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Информация о сети</h3>
+                            <p>Показывает IP, MAC, шлюз</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('pingGoogle')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Проверка соединения</h3>
+                            <p>Ping Google DNS (8.8.8.8)</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('resetWinsock')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                                <path d="M2 17l10 5 10-5"/>
+                                <path d="M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Сброс Winsock</h3>
+                            <p>Восстанавливает Winsock каталог</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Commands -->
+                <div class="commands-grid" id="system">
+                    <div class="command-card" onclick="executeCommand('systemInfo')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                <line x1="8" y1="21" x2="16" y2="21"/>
+                                <line x1="12" y1="17" x2="12" y2="21"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Информация о системе</h3>
+                            <p>Подробные данные о компьютере</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('checkDisk')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Проверка диска</h3>
+                            <p>Запускает chkdsk для диска C:</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('sfcScan')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Проверка системных файлов</h3>
+                            <p>SFC сканирование (требует админа)</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('diskCleanup')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6"/>
+                                <path d="M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Очистка диска</h3>
+                            <p>Запускает Disk Cleanup utility</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('defragDisk')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Дефрагментация</h3>
+                            <p>Оптимизация диска C:</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('listProcesses')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"/>
+                                <line x1="8" y1="12" x2="21" y2="12"/>
+                                <line x1="8" y1="18" x2="21" y2="18"/>
+                                <line x1="3" y1="6" x2="3.01" y2="6"/>
+                                <line x1="3" y1="12" x2="3.01" y2="12"/>
+                                <line x1="3" y1="18" x2="3.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Список процессов</h3>
+                            <p>Показывает все запущенные процессы</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Commands -->
+                <div class="commands-grid" id="security">
+                    <div class="command-card" onclick="executeCommand('firewallStatus')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Статус брандмауэра</h3>
+                            <p>Проверка состояния Firewall</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('windowsDefender')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <path d="M9 12l2 2 4-4"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Windows Defender</h3>
+                            <p>Открывает настройки защитника</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('quickScan')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Быстрое сканирование</h3>
+                            <p>Запускает быструю проверку</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('updateDefender')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+                                <polyline points="7 10 12 15 17 10"/>
+                                <line x1="12" y1="15" x2="12" y2="3"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Обновление сигнатур</h3>
+                            <p>Обновляет базы Defender</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('showOpenPorts')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2"/>
+                                <rect x="2" y="14" width="20" height="8" rx="2"/>
+                                <line x1="6" y1="6" x2="6.01" y2="6"/>
+                                <line x1="6" y1="18" x2="6.01" y2="18"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Открытые порты</h3>
+                            <p>Показывает открытые порты</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('securityAudit')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                                <line x1="16" y1="13" x2="8" y2="13"/>
+                                <line x1="16" y1="17" x2="8" y2="17"/>
+                                <polyline points="10 9 9 9 8 9"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Аудит безопасности</h3>
+                            <p>Проверка настроек безопасности</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Diagnostics Commands -->
+                <div class="commands-grid" id="diagnostics">
+                    <div class="command-card" onclick="executeCommand('diskHealth')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Здоровье диска</h3>
+                            <p>S.M.A.R.T. статус диска</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('batteryReport')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="1" y="6" width="18" height="12" rx="2"/>
+                                <line x1="23" y1="13" x2="23" y2="11"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Отчет о батарее</h3>
+                            <p>Генерирует отчет о батарее</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('eventViewer')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Просмотр событий</h3>
+                            <p>Открывает Event Viewer</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('driverQuery')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                <rect x="9" y="9" width="6" height="6"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Список драйверов</h3>
+                            <p>Показывает установленные драйверы</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('memoryDiagnostics')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 19v-3M10 19v-6M14 19v-9M18 19V5"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Диагностика памяти</h3>
+                            <p>Проверка оперативной памяти</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('performanceReport')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Отчет производительности</h3>
+                            <p>Генерирует отчет о системе</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tools Commands -->
+                <div class="commands-grid" id="tools">
+                    <div class="command-card" onclick="executeCommand('openTaskManager')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                <line x1="3" y1="9" x2="21" y2="9"/>
+                                <line x1="9" y1="21" x2="9" y2="9"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Диспетчер задач</h3>
+                            <p>Открывает Task Manager</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('openDeviceManager')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="8" rx="2"/>
+                                <rect x="2" y="14" width="20" height="8" rx="2"/>
+                                <circle cx="6" cy="6" r="1"/>
+                                <circle cx="6" cy="18" r="1"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Диспетчер устройств</h3>
+                            <p>Открывает Device Manager</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('openControlPanel')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"/>
+                                <rect x="14" y="3" width="7" height="7"/>
+                                <rect x="14" y="14" width="7" height="7"/>
+                                <rect x="3" y="14" width="7" height="7"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Панель управления</h3>
+                            <p>Открывает Control Panel</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('openMsConfig')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"/>
+                                <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Конфигурация системы</h3>
+                            <p>Открывает MSConfig</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('openRegistry')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>Редактор реестра</h3>
+                            <p>Открывает RegEdit</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                    <div class="command-card" onclick="executeCommand('openPowerShell')">
+                        <div class="command-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="4 17 10 11 4 5"/>
+                                <line x1="12" y1="19" x2="20" y2="19"/>
+                            </svg>
+                        </div>
+                        <div class="command-info">
+                            <h3>PowerShell</h3>
+                            <p>Открывает PowerShell</p>
+                        </div>
+                        <div class="command-action">
+                            <span class="action-btn">Выполнить</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Actions Section -->
+    <section id="diagnostics" class="diagnostics-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Автоматизация</span>
+                <h2 class="section-title">Быстрые действия</h2>
+                <p class="section-description">Комплексные операции для обслуживания системы одним кликом</p>
+            </div>
+            <div class="quick-actions">
+                <div class="quick-action-card" onclick="executeCommand('fullDiagnostic')">
+                    <div class="quick-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                        </svg>
+                    </div>
+                    <div class="quick-content">
+                        <h3>Полная диагностика</h3>
+                        <p>Запускает полный анализ системы включая процессор, память, диск, сеть и безопасность</p>
+                    </div>
+                    <div class="quick-action-footer">
+                        <span class="time-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            ~30 сек
+                        </span>
+                        <span class="action-arrow">→</span>
+                    </div>
+                </div>
+                <div class="quick-action-card" onclick="executeCommand('quickFix')">
+                    <div class="quick-icon gradient-2">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <div class="quick-content">
+                        <h3>Быстрое исправление</h3>
+                        <p>Автоматически исправляет распространенные сетевые проблемы: DNS, Winsock, ARP</p>
+                    </div>
+                    <div class="quick-action-footer">
+                        <span class="time-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            ~10 сек
+                        </span>
+                        <span class="action-arrow">→</span>
+                    </div>
+                </div>
+                <div class="quick-action-card" onclick="executeCommand('optimizeSystem')">
+                    <div class="quick-icon gradient-3">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                        </svg>
+                    </div>
+                    <div class="quick-content">
+                        <h3>Оптимизация системы</h3>
+                        <p>Очистка временных файлов, корзины, сброс DNS и анализ свободного места</p>
+                    </div>
+                    <div class="quick-action-footer">
+                        <span class="time-badge">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                            </svg>
+                            ~1 мин
+                        </span>
+                        <span class="action-arrow">→</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Готовы оптимизировать систему?</h2>
+                <p>Запустите приложение и получите доступ ко всем функциям прямо сейчас</p>
+                <a href="#categories" class="btn btn-primary btn-large">
+                    <span>Открыть панель управления</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-main">
+                    <div class="footer-logo">
+                        <div class="logo-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                            </svg>
+                        </div>
+                        <span>TechSupport <span class="logo-pro">Pro</span></span>
+                    </div>
+                    <p class="footer-text">Локальное приложение для технической поддержки Windows. Все команды выполняются на вашем компьютере без передачи данных в интернет.</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-col">
+                        <h4>Категории</h4>
+                        <a href="#categories">Очистка</a>
+                        <a href="#categories">Сеть</a>
+                        <a href="#categories">Система</a>
+                        <a href="#categories">Безопасность</a>
+                    </div>
+                    <div class="footer-col">
+                        <h4>Информация</h4>
+                        <a href="#features">Преимущества</a>
+                        <a href="#system">Система</a>
+                        <a href="#diagnostics">Диагностика</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="footer-version">Версия 1.0.0 • Windows 10/11</div>
+                <div class="footer-copy">© 2024 TechSupport Pro</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Результат выполнения</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <pre id="modalResult"></pre>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="copyResult()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2"/>
+                        <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+                    </svg>
+                    Копировать
+                </button>
+                <button class="btn btn-primary" onclick="closeModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <span>Выполнение команды...</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
