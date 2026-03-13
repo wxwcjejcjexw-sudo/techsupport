@@ -1,660 +1,320 @@
-﻿# TechSupport Pro - Local HTTP Server
-# PowerShell HTTP Server for executing system commands
+﻿# TechSupport Pro - Главный сервер
+# Загружает модули и обрабатывает запросы
 
-Add-Type -AssemblyName System.Web
+# Кодировка
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+$OutputEncoding = [System.Text.Encoding]::UTF8
 
-# Configuration
-$Port = 8080
-$BaseUrl = "http://localhost:$Port"
+# Проверка прав администратора
+$script:IsAdmin = ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
-# HTML content path
-$ScriptPath = $PSScriptRoot
-$IndexPath = Join-Path $ScriptPath "index.html"
-$StylesPath = Join-Path $ScriptPath "styles.css"
-$ScriptJSPath = Join-Path $ScriptPath "script.js"
+# Путь к модулям
+$modulesPath = Join-Path $PSScriptRoot "modules"
 
-# Command definitions
-$Commands = @{
-    # Cleaning commands
-    "cleanTemp" = {
-        $tempPath = $env:TEMP
-        $before = (Get-ChildItem $tempPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $beforeMB = [math]::Round($before / 1MB, 2)
-        
-        Remove-Item "$tempPath\*" -Recurse -Force -ErrorAction SilentlyContinue
-        
-        $after = (Get-ChildItem $tempPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $afterMB = [math]::Round($after / 1MB, 2)
-        $freed = [math]::Round($beforeMB - $afterMB, 2)
-        
-        "TEMP folder cleanup`nPath: $tempPath`nFreed: $freed MB`nBefore: $beforeMB MB`nAfter: $afterMB MB"
-    }
+# Загрузка всех модулей
+function Load-Modules {
+    $allCommands = @{}
     
-    "cleanWindowsTemp" = {
-        $tempPath = "C:\Windows\Temp"
-        $before = (Get-ChildItem $tempPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $beforeMB = [math]::Round($before / 1MB, 2)
-        
-        Start-Process powershell -ArgumentList "-Command Remove-Item '$tempPath\*' -Recurse -Force -ErrorAction SilentlyContinue" -Verb RunAs -Wait
-        
-        $after = (Get-ChildItem $tempPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $afterMB = [math]::Round($after / 1MB, 2)
-        $freed = [math]::Round($beforeMB - $afterMB, 2)
-        
-        "Windows Temp cleanup`nPath: $tempPath`nFreed: $freed MB`nBefore: $beforeMB MB`nAfter: $afterMB MB"
-    }
+    $moduleFiles = @(
+        "commands-system.ps1",
+        "commands-network.ps1", 
+        "commands-management.ps1",
+        "commands-info.ps1",
+        "commands-security.ps1"
+    )
     
-    "cleanPrefetch" = {
-        $prefetchPath = "C:\Windows\Prefetch"
-        $before = (Get-ChildItem $prefetchPath -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $beforeMB = [math]::Round($before / 1MB, 2)
-        
-        Start-Process powershell -ArgumentList "-Command Remove-Item '$prefetchPath\*' -Force -ErrorAction SilentlyContinue" -Verb RunAs -Wait
-        
-        $after = (Get-ChildItem $prefetchPath -File -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $afterMB = [math]::Round($after / 1MB, 2)
-        $freed = [math]::Round($beforeMB - $afterMB, 2)
-        
-        "Prefetch cleanup`nPath: $prefetchPath`nFreed: $freed MB"
-    }
-    
-    "cleanRecycleBin" = {
-        Clear-RecycleBin -Force -ErrorAction SilentlyContinue
-        "Recycle Bin cleared successfully!"
-    }
-    
-    "cleanBrowserCache" = {
-        $results = @()
-        
-        # Chrome
-        $chromeCache = "$env:LOCALAPPDATA\Google\Chrome\User Data\Default\Cache"
-        if (Test-Path $chromeCache) {
-            Remove-Item "$chromeCache\*" -Recurse -Force -ErrorAction SilentlyContinue
-            $results += "Chrome: cache cleared"
-        }
-        
-        # Edge
-        $edgeCache = "$env:LOCALAPPDATA\Microsoft\Edge\User Data\Default\Cache"
-        if (Test-Path $edgeCache) {
-            Remove-Item "$edgeCache\*" -Recurse -Force -ErrorAction SilentlyContinue
-            $results += "Edge: cache cleared"
-        }
-        
-        # Firefox
-        $firefoxCache = "$env:LOCALAPPDATA\Mozilla\Firefox\Profiles"
-        if (Test-Path $firefoxCache) {
-            Get-ChildItem $firefoxCache -Directory | ForEach-Object {
-                $cachePath = Join-Path $_.FullName "cache2"
-                if (Test-Path $cachePath) {
-                    Remove-Item "$cachePath\*" -Recurse -Force -ErrorAction SilentlyContinue
+    foreach ($file in $moduleFiles) {
+        $modulePath = Join-Path $modulesPath $file
+        if (Test-Path $modulePath) {
+            try {
+                . $modulePath
+                
+                switch ($file) {
+                    "commands-system.ps1" { $fn = "Get-SystemCommands" }
+                    "commands-network.ps1" { $fn = "Get-NetworkCommands" }
+                    "commands-management.ps1" { $fn = "Get-ManagementCommands" }
+                    "commands-info.ps1" { $fn = "Get-InfoCommands" }
+                    "commands-security.ps1" { $fn = "Get-SecurityCommands" }
                 }
+                
+                $commands = & $fn
+                foreach ($key in $commands.Keys) {
+                    $allCommands[$key] = $commands[$key]
+                }
+                Write-Host "  Loaded: $file ($($commands.Count) commands)" -ForegroundColor Gray
+            } catch {
+                Write-Host "  Error loading $file : $_" -ForegroundColor Red
             }
-            $results += "Firefox: cache cleared"
         }
-        
-        $results -join "`n"
     }
     
-    "cleanWindowsUpdate" = {
-        $wuPath = "C:\Windows\SoftwareDistribution\Download"
-        $before = (Get-ChildItem $wuPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $beforeMB = [math]::Round($before / 1MB, 2)
-        
-        Start-Process powershell -ArgumentList "-Command Remove-Item '$wuPath\*' -Recurse -Force -ErrorAction SilentlyContinue" -Verb RunAs -Wait
-        
-        $after = (Get-ChildItem $wuPath -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $afterMB = [math]::Round($after / 1MB, 2)
-        $freed = [math]::Round($beforeMB - $afterMB, 2)
-        
-        "Windows Update files cleanup`nFreed: $freed MB"
-    }
-    
-    # Network commands
-    "flushDNS" = {
-        $result = ipconfig /flushdns 2>&1
-        $result | Out-String
-    }
-    
-    "releaseRenewIP" = {
-        $release = ipconfig /release 2>&1
-        Start-Sleep -Seconds 2
-        $renew = ipconfig /renew 2>&1
-        "IP Release:`n$release`n`nIP Renew:`n$renew"
-    }
-    
-    "resetNetwork" = {
-        netsh winsock reset
-        netsh int ip reset
-        ipconfig /release
-        ipconfig /renew
-        "Network stack reset successfully!`nReboot recommended."
-    }
-    
-    "showNetworkInfo" = {
-        $adapters = Get-NetAdapter | Where-Object { $_.Status -eq "Up" }
-        $results = @()
-        
-        foreach ($adapter in $adapters) {
-            $ip = Get-NetIPAddress -InterfaceIndex $adapter.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue
-            $mac = $adapter.MacAddress
-            $gateway = Get-NetRoute -InterfaceIndex $adapter.ifIndex -DestinationPrefix "0.0.0.0/0" -ErrorAction SilentlyContinue
-            
-            $results += "Adapter: $($adapter.Name)"
-            $results += "  MAC: $mac"
-            $results += "  IP: $($ip.IPAddress)"
-            $results += "  Gateway: $($gateway.NextHop)"
-            $results += ""
-        }
-        
-        $results -join "`n"
-    }
-    
-    "pingGoogle" = {
-        $result = ping 8.8.8.8 -n 4 2>&1
-        $result | Out-String
-    }
-    
-    "resetWinsock" = {
-        $result = netsh winsock reset 2>&1
-        "$result`nWinsock catalog reset! Reboot recommended."
-    }
-    
-    # System commands
-    "systemInfo" = {
-        $info = Get-ComputerInfo
-        $results = @()
-        $results += "Computer Name: $($info.CsName)"
-        $results += "OS: $($info.WindowsProductName) $($info.WindowsVersion)"
-        $results += "Build: $($info.OsBuildNumber)"
-        $results += "CPU: $($info.CsProcessors[0].Name)"
-        $results += "RAM: $([math]::Round($info.CsTotalPhysicalMemory / 1GB, 2)) GB"
-        $results += "Manufacturer: $($info.CsManufacturer)"
-        $results += "Model: $($info.CsModel)"
-        $results += "Uptime: $($info.OsUptime)"
-        
-        $results -join "`n"
-    }
-    
-    "checkDisk" = {
-        Start-Process cmd -ArgumentList "/c echo Y | chkdsk C: /F" -Verb RunAs -Wait
-        "Disk check for C: started. Check the separate window."
-    }
-    
-    "sfcScan" = {
-        Start-Process powershell -ArgumentList "-Command sfc /scannow; pause" -Verb RunAs
-        "SFC scan started in separate window with admin rights."
-    }
-    
-    "diskCleanup" = {
-        Start-Process cleanmgr -ArgumentList "/d C"
-        "Disk Cleanup utility started."
-    }
-    
-    "defragDisk" = {
-        Start-Process powershell -ArgumentList "-Command Optimize-Volume -DriveLetter C -Verbose; pause" -Verb RunAs
-        "Disk C: optimization started in separate window."
-    }
-    
-    "listProcesses" = {
-        $processes = Get-Process | Sort-Object CPU -Descending | Select-Object -First 20
-        $results = @()
-        $results += "Top 20 processes by CPU usage:`n"
-        $results += "{0,-30} {1,10} {2,10} {3,15}" -f "Name", "CPU (s)", "RAM (MB)", "Threads"
-        $results += "-" * 70
-        
-        foreach ($p in $processes) {
-            $results += "{0,-30} {1,10:N0} {2,10:N0} {3,15}" -f $p.ProcessName, $p.CPU, ([math]::Round($p.WorkingSet64 / 1MB, 0)), $p.Threads.Count
-        }
-        
-        $results -join "`n"
-    }
-    
-    # Security commands
-    "firewallStatus" = {
-        $status = Get-NetFirewallProfile
-        $results = @()
-        
-        foreach ($profile in $status) {
-            $results += "Profile: $($profile.Name)"
-            $results += "  Enabled: $($profile.Enabled)"
-            $results += "  Action: $($profile.DefaultInboundAction)/$($profile.DefaultOutboundAction)"
-            $results += ""
-        }
-        
-        $results -join "`n"
-    }
-    
-    "windowsDefender" = {
-        Start-Process "windowsdefender:"
-        "Windows Defender Security Center opened."
-    }
-    
-    "quickScan" = {
-        Start-Process powershell -ArgumentList "-Command Start-MpScan -ScanType QuickScan; Write-Host 'Quick scan started...'; pause" -Verb RunAs
-        "Windows Defender quick scan started."
-    }
-    
-    "updateDefender" = {
-        Start-Process powershell -ArgumentList "-Command Update-MpSignature; Write-Host 'Signature update completed'; pause" -Verb RunAs
-        "Windows Defender signature update started."
-    }
-    
-    "showOpenPorts" = {
-        $connections = Get-NetTCPConnection | Where-Object { $_.State -eq "Listen" } | Select-Object LocalPort, OwningProcess
-        $results = @()
-        $results += "Open ports:`n"
-        $results += "{0,10} {1,10} {2,-30}" -f "Port", "PID", "Process"
-        $results += "-" * 55
-        
-        foreach ($conn in $connections | Sort-Object LocalPort) {
-            $process = Get-Process -Id $conn.OwningProcess -ErrorAction SilentlyContinue
-            $results += "{0,10} {1,10} {2,-30}" -f $conn.LocalPort, $conn.OwningProcess, $process.ProcessName
-        }
-        
-        $results -join "`n"
-    }
-    
-    "securityAudit" = {
-        $results = @()
-        
-        # Windows Defender
-        $defender = Get-MpComputerStatus -ErrorAction SilentlyContinue
-        $results += "Windows Defender:"
-        $results += "  Real-time protection: $($defender.RealTimeProtectionEnabled)"
-        $results += "  Antivirus enabled: $($defender.AntivirusEnabled)"
-        $results += ""
-        
-        # Firewall
-        $firewall = Get-NetFirewallProfile | Where-Object { $_.Enabled -eq $true }
-        $results += "Firewall:"
-        $results += "  Active profiles: $($firewall.Count)"
-        $results += ""
-        
-        # Windows Update
-        $update = Get-Service wuauserv -ErrorAction SilentlyContinue
-        $results += "Windows Update:"
-        $results += "  Service status: $($update.Status)"
-        $results += ""
-        
-        # UAC
-        $uac = (Get-ItemProperty HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System).EnableLUA
-        $uacStatus = if($uac -eq 1){"Enabled"}else{"Disabled"}
-        $results += "UAC: $uacStatus"
-        
-        $results -join "`n"
-    }
-    
-    # Diagnostics commands
-    "diskHealth" = {
-        $disks = Get-PhysicalDisk
-        $results = @()
-        
-        foreach ($disk in $disks) {
-            $results += "Disk: $($disk.FriendlyName)"
-            $results += "  Type: $($disk.MediaType)"
-            $results += "  Size: $([math]::Round($disk.Size / 1GB, 2)) GB"
-            $results += "  Health: $($disk.HealthStatus)"
-            $results += "  Status: $($disk.OperationalStatus)"
-            $results += ""
-        }
-        
-        $results -join "`n"
-    }
-    
-    "batteryReport" = {
-        $reportPath = "$env:USERPROFILE\Desktop\battery-report.html"
-        powercfg /batteryreport /output $reportPath
-        "Battery report saved to: $reportPath"
-    }
-    
-    "eventViewer" = {
-        eventvwr.msc
-        "Event Viewer opened."
-    }
-    
-    "driverQuery" = {
-        $drivers = driverquery /v /fo csv 2>&1 | ConvertFrom-Csv | Select-Object -First 30
-        $results = @()
-        $results += "Installed drivers (first 30):`n"
-        $results += "{0,-40} {1,-15} {2,-12}" -f "Name", "Type", "Date"
-        $results += "-" * 70
-        
-        foreach ($driver in $drivers) {
-            $results += "{0,-40} {1,-15} {2,-12}" -f $driver.'Module Name', $driver.'Driver Type', $driver.'Date'
-        }
-        
-        $results -join "`n"
-    }
-    
-    "memoryDiagnostics" = {
-        Start-Process powershell -ArgumentList "-Command Write-Host 'Starting memory diagnostics...'; Start-Process mdshedex.exe -Wait; pause" -Verb RunAs
-        "Memory diagnostics will run on next reboot."
-    }
-    
-    "performanceReport" = {
-        Start-Process powershell -ArgumentList "-Command Get-WinEvent -LogName 'Microsoft-Windows-Diagnostics-Performance/Operational' -MaxEvents 10 | Format-List; pause" -NoNewWindow
-        "Check Event Viewer for performance report."
-    }
-    
-    # Tools commands
-    "openTaskManager" = {
-        taskmgr
-        "Task Manager opened."
-    }
-    
-    "openDeviceManager" = {
-        devmgmt.msc
-        "Device Manager opened."
-    }
-    
-    "openControlPanel" = {
-        control
-        "Control Panel opened."
-    }
-    
-    "openMsConfig" = {
-        msconfig
-        "System Configuration opened."
-    }
-    
-    "openRegistry" = {
-        regedit
-        "Registry Editor opened."
-    }
-    
-    "openPowerShell" = {
-        Start-Process powershell
-        "PowerShell opened."
-    }
-    
-    # Quick Actions
-    "fullDiagnostic" = {
-        $results = @()
-        $results += "=" * 50
-        $results += "      FULL SYSTEM DIAGNOSTIC"
-        $results += "=" * 50
-        $results += ""
-        
-        # CPU Info
-        $cpu = Get-WmiObject Win32_Processor
-        $results += "> CPU"
-        $results += "  Name: $($cpu.Name)"
-        $results += "  Cores: $($cpu.NumberOfCores)"
-        $results += "  Load: $($cpu.LoadPercentage)%"
-        $results += ""
-        
-        # RAM Info
-        $os = Get-WmiObject Win32_OperatingSystem
-        $totalRAM = [math]::Round($os.TotalVisibleMemorySize / 1MB, 2)
-        $freeRAM = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
-        $usedRAM = [math]::Round($totalRAM - $freeRAM, 2)
-        $results += "> MEMORY"
-        $results += "  Total: $totalRAM GB"
-        $results += "  Used: $usedRAM GB"
-        $results += "  Free: $freeRAM GB"
-        $results += ""
-        
-        # Disk Info
-        $disks = Get-WmiObject Win32_LogicalDisk | Where-Object { $_.DriveType -eq 3 }
-        $results += "> DISKS"
-        foreach ($disk in $disks) {
-            $total = [math]::Round($disk.Size / 1GB, 2)
-            $free = [math]::Round($disk.FreeSpace / 1GB, 2)
-            $used = [math]::Round($total - $free, 2)
-            $results += "  $($disk.DeviceID) Total: ${total}GB | Used: ${used}GB | Free: ${free}GB"
-        }
-        $results += ""
-        
-        # Network
-        $netAdapters = Get-NetAdapter | Where-Object { $_.Status -eq "Up" }
-        $results += "> NETWORK"
-        $results += "  Active adapters: $($netAdapters.Count)"
-        foreach ($adapter in $netAdapters) {
-            $ip = Get-NetIPAddress -InterfaceIndex $adapter.ifIndex -AddressFamily IPv4 -ErrorAction SilentlyContinue
-            $results += "  $($adapter.Name): $($ip.IPAddress)"
-        }
-        $results += ""
-        
-        # Security
-        $defender = Get-MpComputerStatus -ErrorAction SilentlyContinue
-        $defStatus = if($defender.RealTimeProtectionEnabled){"Active"}else{"Inactive"}
-        $results += "> SECURITY"
-        $results += "  Defender: $defStatus"
-        $firewall = Get-NetFirewallProfile | Where-Object { $_.Enabled -eq $true }
-        $fwStatus = if($firewall){"Active"}else{"Inactive"}
-        $results += "  Firewall: $fwStatus"
-        $results += ""
-        
-        $results += ("=" * 50)
-        $results += "      DIAGNOSTIC COMPLETE"
-        $results += ("=" * 50)
-        
-        $results -join "`n"
-    }
-    
-    "quickFix" = {
-        $results = @()
-        $results += "=" * 50
-        $results += "      QUICK FIX"
-        $results += "=" * 50
-        $results += ""
-        
-        # DNS Flush
-        $results += "> Flushing DNS cache..."
-        $dns = ipconfig /flushdns 2>&1
-        $results += "  Done"
-        
-        # Reset Network Stack
-        $results += "> Resetting Winsock..."
-        netsh winsock reset | Out-Null
-        $results += "  Done"
-        
-        # Clear ARP Cache
-        $results += "> Clearing ARP cache..."
-        netsh interface ip delete arpcache | Out-Null
-        $results += "  Done"
-        
-        # Reset IP
-        $results += "> Resetting IP configuration..."
-        netsh int ip reset | Out-Null
-        $results += "  Done"
-        
-        $results += ""
-        $results += ("=" * 50)
-        $results += "   Reboot recommended!"
-        $results += ("=" * 50)
-        
-        $results -join "`n"
-    }
-    
-    "optimizeSystem" = {
-        $results = @()
-        $results += "=" * 50
-        $results += "      SYSTEM OPTIMIZATION"
-        $results += "=" * 50
-        $results += ""
-        
-        # Clean Temp
-        $results += "> Cleaning temp files..."
-        $tempBefore = (Get-ChildItem $env:TEMP -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        Remove-Item "$env:TEMP\*" -Recurse -Force -ErrorAction SilentlyContinue
-        $tempAfter = (Get-ChildItem $env:TEMP -Recurse -Force -ErrorAction SilentlyContinue | Measure-Object Length -Sum).Sum
-        $results += "  Freed: $([math]::Round(($tempBefore - $tempAfter) / 1MB, 2)) MB"
-        
-        # Clean Recycle Bin
-        $results += "> Cleaning Recycle Bin..."
-        Clear-RecycleBin -Force -ErrorAction SilentlyContinue
-        $results += "  Done"
-        
-        # DNS Flush
-        $results += "> Flushing DNS cache..."
-        ipconfig /flushdns | Out-Null
-        $results += "  Done"
-        
-        # Disk Analysis
-        $results += "> Analyzing disk C:..."
-        $disk = Get-WmiObject Win32_LogicalDisk -Filter "DeviceID='C:'"
-        $freeSpace = [math]::Round($disk.FreeSpace / 1GB, 2)
-        $results += "  Free on C:: $freeSpace GB"
-        
-        $results += ""
-        $results += ("=" * 50)
-        $results += "      OPTIMIZATION COMPLETE"
-        $results += ("=" * 50)
-        
-        $results -join "`n"
-    }
+    return $allCommands
 }
 
-# System Info endpoint
-function Get-SystemInfo {
-    $cpu = (Get-WmiObject Win32_Processor).Name
-    $ram = (Get-WmiObject Win32_OperatingSystem)
-    $totalRAM = [math]::Round($ram.TotalVisibleMemorySize / 1MB, 2)
-    $freeRAM = [math]::Round($ram.FreePhysicalMemory / 1MB, 2)
-    
-    $disk = Get-WmiObject Win32_LogicalDisk -Filter "DeviceID='C:'"
-    $diskTotal = [math]::Round($disk.Size / 1GB, 2)
-    $diskFree = [math]::Round($disk.FreeSpace / 1GB, 2)
-    
-    $os = (Get-WmiObject Win32_OperatingSystem).Caption
-    
-    return @{
-        cpu = $cpu
-        ram = "$freeRAM GB / $totalRAM GB"
-        disk = "$diskFree GB / $diskTotal GB"
-        os = $os
-    }
+# Инициализация путей
+$script:BackupPath = Join-Path $PSScriptRoot "backups"
+$script:DataPath = Join-Path $PSScriptRoot "data"
+
+if (-not (Test-Path $script:BackupPath)) {
+    New-Item -ItemType Directory -Path $script:BackupPath -Force | Out-Null
+}
+if (-not (Test-Path $script:DataPath)) {
+    New-Item -ItemType Directory -Path $script:DataPath -Force | Out-Null
 }
 
-# HTTP Listener
+# Загружаем команды
+$script:Commands = Load-Modules
+
+# HTTP сервер с автоматическим поиском свободного порта
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("$BaseUrl/")
-$listener.Prefixes.Add("$BaseUrl/api/")
+$port = 8080
+$maxPort = 8090
+$started = $false
 
-try {
-    $listener.Start()
-    Write-Host "=" * 60
-    Write-Host "    TechSupport Pro - Server Started" -ForegroundColor Green
-    Write-Host "=" * 60
-    Write-Host ""
-    Write-Host "  Web interface: $BaseUrl" -ForegroundColor Yellow
-    Write-Host "  Press Ctrl+C to stop" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "=" * 60
-    
-    # Open browser
-    Start-Process $BaseUrl
-    
-    while ($listener.IsListening) {
+while (-not $started -and $port -le $maxPort) {
+    try {
+        $listener.Prefixes.Clear()
+        $listener.Prefixes.Add("http://localhost:$port/")
+        $listener.Start()
+        $started = $true
+    } catch {
+        Write-Host "  Port $port is busy, trying next..." -ForegroundColor Yellow
+        $port++
+    }
+}
+
+if (-not $started) {
+    Write-Host "  ERROR: Could not find available port (8080-8090)" -ForegroundColor Red
+    Write-Host "  Please check if another application is using these ports." -ForegroundColor Yellow
+    exit 1
+}
+
+Write-Host ""
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host "   TechSupport Pro - Server Started" -ForegroundColor Green
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host ""
+Write-Host "  URL: http://localhost:8080" -ForegroundColor Yellow
+Write-Host "  Commands loaded: $($script:Commands.Count)" -ForegroundColor Gray
+Write-Host "  Admin rights: $($script:IsAdmin)" -ForegroundColor $(if ($script:IsAdmin) { "Green" } else { "Yellow" })
+Write-Host ""
+Write-Host "  Press Ctrl+C to stop" -ForegroundColor DarkGray
+Write-Host "==========================================" -ForegroundColor Cyan
+Write-Host ""
+
+# Обработка запросов
+while ($listener.IsListening) {
+    try {
         $context = $listener.GetContext()
         $request = $context.Request
         $response = $context.Response
         
-        $path = $request.Url.AbsolutePath
-        $method = $request.HttpMethod
-        
-        # CORS headers
+        # CORS
         $response.Headers.Add("Access-Control-Allow-Origin", "*")
         $response.Headers.Add("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
         $response.Headers.Add("Access-Control-Allow-Headers", "Content-Type")
         
-        if ($method -eq "OPTIONS") {
+        $path = $request.Url.AbsolutePath
+        
+        if ($request.HttpMethod -eq "OPTIONS") {
             $response.StatusCode = 200
             $response.Close()
             continue
         }
         
-        try {
-            switch ($path) {
-                "/" {
-                    $content = [System.IO.File]::ReadAllBytes($IndexPath)
-                    $response.ContentType = "text/html; charset=utf-8"
-                    $response.ContentLength64 = $content.Length
-                    $response.OutputStream.Write($content, 0, $content.Length)
-                }
-                
-                "/styles.css" {
-                    $content = [System.IO.File]::ReadAllBytes($StylesPath)
-                    $response.ContentType = "text/css; charset=utf-8"
-                    $response.ContentLength64 = $content.Length
-                    $response.OutputStream.Write($content, 0, $content.Length)
-                }
-                
-                "/script.js" {
-                    $content = [System.IO.File]::ReadAllBytes($ScriptJSPath)
-                    $response.ContentType = "application/javascript; charset=utf-8"
-                    $response.ContentLength64 = $content.Length
-                    $response.OutputStream.Write($content, 0, $content.Length)
-                }
-                
-                "/api/system-info" {
-                    $info = Get-SystemInfo
-                    $json = @{
-                        success = $true
-                        cpu = $info.cpu
-                        ram = $info.ram
-                        disk = $info.disk
-                        os = $info.os
-                    } | ConvertTo-Json
-                    
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
-                    $response.ContentType = "application/json; charset=utf-8"
-                    $response.ContentLength64 = $buffer.Length
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
-                }
-                
-                "/api/execute" {
-                    if ($method -eq "POST") {
-                        $reader = New-Object System.IO.StreamReader($request.InputStream)
-                        $body = $reader.ReadToEnd()
-                        $data = $body | ConvertFrom-Json
-                        
-                        $command = $data.command
-                        
-                        if ($Commands.ContainsKey($command)) {
-                            try {
-                                $result = & $Commands[$command]
-                                $json = @{
-                                    success = $true
-                                    result = $result
-                                } | ConvertTo-Json
-                            } catch {
-                                $json = @{
-                                    success = $false
-                                    error = $_.Exception.Message
-                                } | ConvertTo-Json
-                            }
-                        } else {
-                            $json = @{
-                                success = $false
-                                error = "Unknown command: $command"
-                            } | ConvertTo-Json
-                        }
-                        
-                        $buffer = [System.Text.Encoding]::UTF8.GetBytes($json)
-                        $response.ContentType = "application/json; charset=utf-8"
-                        $response.ContentLength64 = $buffer.Length
-                        $response.OutputStream.Write($buffer, 0, $buffer.Length)
-                    }
-                }
-                
-                default {
-                    $response.StatusCode = 404
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes("Not Found")
-                    $response.OutputStream.Write($buffer, 0, $buffer.Length)
-                }
+        # Static files
+        if ($path -eq "/" -or $path -eq "/index.html") {
+            $filePath = Join-Path $PSScriptRoot "index.html"
+            if (Test-Path $filePath) {
+                $content = [System.IO.File]::ReadAllBytes($filePath)
+                $response.ContentType = "text/html; charset=utf-8"
+                $response.ContentLength64 = $content.Length
+                $response.OutputStream.Write($content, 0, $content.Length)
             }
-        } catch {
-            Write-Host "Error: $_" -ForegroundColor Red
-            $response.StatusCode = 500
+        }
+        elseif ($path -eq "/styles.css") {
+            $filePath = Join-Path $PSScriptRoot "styles.css"
+            if (Test-Path $filePath) {
+                $content = [System.IO.File]::ReadAllBytes($filePath)
+                $response.ContentType = "text/css; charset=utf-8"
+                $response.ContentLength64 = $content.Length
+                $response.OutputStream.Write($content, 0, $content.Length)
+            }
+        }
+        elseif ($path -eq "/script.js") {
+            $filePath = Join-Path $PSScriptRoot "script.js"
+            if (Test-Path $filePath) {
+                $content = [System.IO.File]::ReadAllBytes($filePath)
+                $response.ContentType = "application/javascript; charset=utf-8"
+                $response.ContentLength64 = $content.Length
+                $response.OutputStream.Write($content, 0, $content.Length)
+            }
+        }
+        elseif ($path -eq "/header.mp4") {
+            $filePath = Join-Path $PSScriptRoot "header.mp4"
+            if (Test-Path $filePath) {
+                $content = [System.IO.File]::ReadAllBytes($filePath)
+                $response.ContentType = "video/mp4"
+                $response.ContentLength64 = $content.Length
+                $response.OutputStream.Write($content, 0, $content.Length)
+            }
+        }
+        # API: Admin check
+        elseif ($path -eq "/api/admin-check") {
+            $responseBody = @{
+                isAdmin = $script:IsAdmin
+                username = $env:USERNAME
+                computer = $env:COMPUTERNAME
+            } | ConvertTo-Json
+            
+            $buffer = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.ContentLength64 = $buffer.Length
+            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        }
+        # API: System info
+        elseif ($path -eq "/api/system-info") {
+            try {
+                $cpu = Get-CimInstance Win32_Processor
+                $os = Get-CimInstance Win32_OperatingSystem
+                $ram = Get-CimInstance Win32_PhysicalMemory | Measure-Object Capacity -Sum
+                $disk = Get-CimInstance Win32_LogicalDisk -Filter "DeviceID='C:'"
+                
+                $totalRAM = [math]::Round($ram.Sum / 1GB, 1)
+                $freeRAM = [math]::Round($os.FreePhysicalMemory / 1MB, 1)
+                $usedRAM = [math]::Round($totalRAM - ($freeRAM / 1024), 1)
+                
+                $totalDisk = [math]::Round($disk.Size / 1GB, 1)
+                $freeDisk = [math]::Round($disk.FreeSpace / 1GB, 1)
+                
+                $responseBody = @{
+                    success = $true
+                    cpu = "$($cpu.Name)"
+                    ram = "$usedRAM GB / $totalRAM GB used"
+                    disk = "$freeDisk GB / $totalDisk GB free"
+                    os = "$($os.Caption) $($os.Version)"
+                } | ConvertTo-Json
+            } catch {
+                $responseBody = @{
+                    success = $false
+                    error = $_.Exception.Message
+                } | ConvertTo-Json
+            }
+            
+            $buffer = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.ContentLength64 = $buffer.Length
+            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        }
+        # API: Execute command
+        elseif ($path -eq "/api/execute" -and $request.HttpMethod -eq "POST") {
+            $reader = New-Object System.IO.StreamReader($request.InputStream)
+            $body = $reader.ReadToEnd()
+            $data = $body | ConvertFrom-Json
+            
+            $command = $data.command
+            $params = $data.params
+            
+            Write-Host "Executing: $command" -ForegroundColor Cyan
+            
+            if ($script:Commands.ContainsKey($command)) {
+                try {
+                    $scriptBlock = $script:Commands[$command]
+                    
+                    if ($params) {
+                        $result = & $scriptBlock $params
+                    } else {
+                        $result = & $scriptBlock
+                    }
+                    
+                    $responseBody = @{
+                        success = $true
+                        result = $result
+                        command = $command
+                    } | ConvertTo-Json -Depth 10
+                } catch {
+                    $responseBody = @{
+                        success = $false
+                        error = $_.Exception.Message
+                        command = $command
+                    } | ConvertTo-Json
+                }
+            } else {
+                $responseBody = @{
+                    success = $false
+                    error = "Unknown command: $command"
+                } | ConvertTo-Json
+            }
+            
+            $buffer = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.ContentLength64 = $buffer.Length
+            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        }
+        # API: Backup create
+        elseif ($path -eq "/api/backup/create" -and $request.HttpMethod -eq "POST") {
+            try {
+                $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+                
+                $backup = @{
+                    timestamp = $timestamp
+                    computer = $env:COMPUTERNAME
+                    user = $env:USERNAME
+                    system = (Get-CimInstance Win32_OperatingSystem).Caption
+                    services = @(Get-Service | Where-Object { $_.Status -eq "Running" } | Select-Object Name, Status, StartType -First 50)
+                    network = @(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notlike "*Loopback*" } | Select-Object InterfaceAlias, IPAddress)
+                }
+                
+                $responseBody = @{
+                    success = $true
+                    data = $backup
+                    message = "Backup created successfully"
+                } | ConvertTo-Json -Depth 4
+            } catch {
+                $responseBody = @{
+                    success = $false
+                    error = $_.Exception.Message
+                } | ConvertTo-Json
+            }
+            
+            $buffer = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.ContentLength64 = $buffer.Length
+            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        }
+        # API: Backup restore
+        elseif ($path -eq "/api/backup/restore" -and $request.HttpMethod -eq "POST") {
+            try {
+                $reader = New-Object System.IO.StreamReader($request.InputStream)
+                $body = $reader.ReadToEnd()
+                $data = $body | ConvertFrom-Json
+                
+                # В реальном приложении здесь была бы логика восстановления
+                $responseBody = @{
+                    success = $true
+                    result = "Backup restore simulated. In production, this would restore system settings."
+                } | ConvertTo-Json
+            } catch {
+                $responseBody = @{
+                    success = $false
+                    error = $_.Exception.Message
+                } | ConvertTo-Json
+            }
+            
+            $buffer = [System.Text.Encoding]::UTF8.GetBytes($responseBody)
+            $response.ContentType = "application/json; charset=utf-8"
+            $response.ContentLength64 = $buffer.Length
+            $response.OutputStream.Write($buffer, 0, $buffer.Length)
+        }
+        else {
+            $response.StatusCode = 404
+            $response.Close()
         }
         
         $response.Close()
+    } catch {
+        Write-Host "Error: $_" -ForegroundColor Red
     }
-} catch {
-    Write-Host "Error starting server: $_" -ForegroundColor Red
-    Write-Host "Make sure the port is not in use." -ForegroundColor Yellow
-} finally {
-    $listener.Stop()
 }
+
+$listener.Stop()
